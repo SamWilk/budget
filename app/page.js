@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 import SummaryCard from "./components/SummaryCard/SummaryCard";
 import TransactionList from "./components/TransactionList/TransactionList";
+import SpendingChart from "./components/SpendingChart/SpendingChart";
 import AddTransactionModal from "./components/AddTransactionModal/AddTransactionModal";
 
 function formatDate(dateStr) {
@@ -67,6 +68,12 @@ export default function Home() {
     router.push("/login");
   }
 
+  async function handleClear() {
+    if (!confirm("Clear all transactions? This can't be undone.")) return;
+    await fetch("/api/transactions", { method: "DELETE" });
+    setTransactions([]);
+  }
+
   // Format transactions for display
   const displayTransactions = transactions.map((t) => ({
     ...t,
@@ -106,11 +113,16 @@ export default function Home() {
           />
         </section>
 
-        <TransactionList
-          transactions={displayTransactions}
-          onAddClick={() => setShowModal(true)}
-          loading={loading}
-        />
+        <div className={styles.columns}>
+          {!loading && <SpendingChart transactions={transactions} />}
+
+          <TransactionList
+            transactions={displayTransactions}
+            onAddClick={() => setShowModal(true)}
+            onClear={handleClear}
+            loading={loading}
+          />
+        </div>
       </main>
 
       {showModal && (

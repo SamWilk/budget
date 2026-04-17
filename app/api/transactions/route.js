@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
-import { getTransactions, createTransaction } from "@/app/lib/mock-data";
+import {
+  getTransactions,
+  createTransaction,
+  clearTransactions,
+} from "@/app/lib/mock-data";
 import { getAuthUser } from "@/app/lib/auth";
 
 export async function GET() {
@@ -44,4 +48,14 @@ export async function POST(request) {
   });
 
   return NextResponse.json(transaction, { status: 201 });
+}
+
+export async function DELETE() {
+  console.log("[DELETE] /api/transactions (clear all)");
+  const user = await getAuthUser();
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  clearTransactions(user.id);
+  return NextResponse.json({ success: true });
 }

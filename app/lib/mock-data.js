@@ -151,3 +151,11 @@ export function deleteTransaction(id, userId) {
   transactions.splice(index, 1);
   return true;
 }
+
+export function clearTransactions(userId) {
+  for (let i = transactions.length - 1; i >= 0; i--) {
+    if (transactions[i].userId === userId) {
+      transactions.splice(i, 1);
+    }
+  }
+}
