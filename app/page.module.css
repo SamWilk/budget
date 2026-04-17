@@ -16,8 +16,40 @@
   font-weight: 700;
   letter-spacing: -0.5px;
   color: var(--accent);
+}
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   max-width: 640px;
   margin: 0 auto;
+}
+
+.logoutBtn {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition:
+    color 0.15s,
+    border-color 0.15s;
+}
+
+.logoutBtn:hover {
+  color: var(--text);
+  border-color: var(--text-secondary);
+}
+
+.greeting {
+  font-size: 14px;
+  color: var(--text-secondary);
+  max-width: 640px;
+  margin: 4px auto 0;
 }
 
 .main {

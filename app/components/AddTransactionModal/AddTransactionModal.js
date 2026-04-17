@@ -3,20 +3,10 @@
 import { useState } from "react";
 import styles from "./AddTransactionModal.module.css";
 
-const CATEGORIES = [
-  "Food",
-  "Utilities",
-  "Income",
-  "Transport",
-  "Entertainment",
-  "Health",
-  "Other",
-];
-
-export default function AddTransactionModal({ onClose, onAdd }) {
+export default function AddTransactionModal({ categories, onClose, onAdd }) {
   const [name, setName] = useState("");
   const [amount, setAmount] = useState("");
-  const [category, setCategory] = useState("Food");
+  const [categoryId, setCategoryId] = useState(categories[0]?.id || "");
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -24,19 +14,19 @@ export default function AddTransactionModal({ onClose, onAdd }) {
     const parsedAmount = parseFloat(amount);
     if (!name.trim() || isNaN(parsedAmount) || parsedAmount === 0) return;
 
-    // Income categories get positive amounts, everything else negative
+    const selectedCategory = categories.find(
+      (c) => c.id === Number(categoryId),
+    );
     const finalAmount =
-      category === "Income" ? Math.abs(parsedAmount) : -Math.abs(parsedAmount);
+      selectedCategory?.type === "income"
+        ? Math.abs(parsedAmount)
+        : -Math.abs(parsedAmount);
 
     onAdd({
-      id: Date.now(),
       name: name.trim(),
       amount: finalAmount,
-      category,
-      date: new Date().toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-      }),
+      categoryId: Number(categoryId),
+      date: new Date().toISOString().split("T")[0],
     });
 
     onClose();
@@ -78,12 +68,12 @@ export default function AddTransactionModal({ onClose, onAdd }) {
           <label className={styles.field}>
             <span>Category</span>
             <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
+              value={categoryId}
+              onChange={(e) => setCategoryId(e.target.value)}
             >
-              {CATEGORIES.map((c) => (
-                <option key={c} value={c}>
-                  {c}
+              {categories.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
                 </option>
               ))}
             </select>

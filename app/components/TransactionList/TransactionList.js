@@ -1,7 +1,7 @@
 import styles from "./TransactionList.module.css";
 import TransactionItem from "../TransactionItem/TransactionItem";
 
-export default function TransactionList({ transactions, onAddClick }) {
+export default function TransactionList({ transactions, onAddClick, loading }) {
   return (
     <section className={styles.container}>
       <div className={styles.header}>
@@ -10,7 +10,9 @@ export default function TransactionList({ transactions, onAddClick }) {
           + Add
         </button>
       </div>
-      {transactions.length === 0 ? (
+      {loading ? (
+        <p className={styles.empty}>Loading...</p>
+      ) : transactions.length === 0 ? (
         <p className={styles.empty}>
           No transactions yet. Add one to get started.
         </p>
