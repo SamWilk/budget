@@ -1,66 +1,100 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from "react";
 import styles from "./page.module.css";
+import SummaryCard from "./components/SummaryCard/SummaryCard";
+import TransactionList from "./components/TransactionList/TransactionList";
+import AddTransactionModal from "./components/AddTransactionModal/AddTransactionModal";
+
+const INITIAL_TRANSACTIONS = [
+  { id: 1, name: "Groceries", amount: -82.5, date: "Apr 15", category: "Food" },
+  {
+    id: 2,
+    name: "Paycheck",
+    amount: 2400.0,
+    date: "Apr 14",
+    category: "Income",
+  },
+  {
+    id: 3,
+    name: "Electric Bill",
+    amount: -124.3,
+    date: "Apr 12",
+    category: "Utilities",
+  },
+  {
+    id: 4,
+    name: "Coffee Shop",
+    amount: -5.75,
+    date: "Apr 11",
+    category: "Food",
+  },
+  {
+    id: 5,
+    name: "Freelance Work",
+    amount: 350.0,
+    date: "Apr 10",
+    category: "Income",
+  },
+];
+
+function formatCurrency(value) {
+  return Math.abs(value).toLocaleString("en-US", { minimumFractionDigits: 2 });
+}
 
 export default function Home() {
+  const [transactions, setTransactions] = useState(INITIAL_TRANSACTIONS);
+  const [showModal, setShowModal] = useState(false);
+
+  const income = transactions
+    .filter((t) => t.amount > 0)
+    .reduce((sum, t) => sum + t.amount, 0);
+  const expenses = transactions
+    .filter((t) => t.amount < 0)
+    .reduce((sum, t) => sum + t.amount, 0);
+  const balance = income + expenses;
+
+  function handleAdd(transaction) {
+    setTransactions((prev) => [transaction, ...prev]);
+  }
+
   return (
     <div className={styles.page}>
+      <header className={styles.header}>
+        <h1>Budget Tracker</h1>
+      </header>
+
       <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+        <section className={styles.summary}>
+          <SummaryCard
+            label="Balance"
+            value={`$${formatCurrency(balance)}`}
+            variant="balance"
+          />
+          <SummaryCard
+            label="Income"
+            value={`+$${formatCurrency(income)}`}
+            variant="income"
+          />
+          <SummaryCard
+            label="Expenses"
+            value={`-$${formatCurrency(expenses)}`}
+            variant="expense"
+          />
+        </section>
+
+        <TransactionList
+          transactions={transactions}
+          onAddClick={() => setShowModal(true)}
         />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.js file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
       </main>
+
+      {showModal && (
+        <AddTransactionModal
+          onClose={() => setShowModal(false)}
+          onAdd={handleAdd}
+        />
+      )}
     </div>
   );
 }
