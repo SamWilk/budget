@@ -11,7 +11,13 @@ const globalForPg = globalThis;
 
 const pool =
   globalForPg._pgPool ??
-  new Pool({ connectionString: process.env.DATABASE_URL });
+  new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl:
+      process.env.NODE_ENV === "production"
+        ? { rejectUnauthorized: false }
+        : false,
+  });
 
 if (process.env.NODE_ENV !== "production") {
   globalForPg._pgPool = pool;
