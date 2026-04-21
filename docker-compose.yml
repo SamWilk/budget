@@ -1,0 +1,26 @@
+services:
+  db:
+    image: postgres:17-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=budget
+      - POSTGRES_PASSWORD=budget
+      - POSTGRES_DB=budget
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./sql:/docker-entrypoint-initdb.d
+
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - JWT_SECRET=change-this-to-a-strong-secret
+      - DATABASE_URL=postgresql://budget:budget@db:5432/budget
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
