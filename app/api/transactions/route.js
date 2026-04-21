@@ -3,7 +3,7 @@ import {
   getTransactions,
   createTransaction,
   clearTransactions,
-} from "@/app/lib/mock-data";
+} from "@/app/lib/db";
 import { getAuthUser } from "@/app/lib/auth";
 
 export async function GET() {
@@ -12,7 +12,7 @@ export async function GET() {
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const transactions = getTransactions(user.id);
+  const transactions = await getTransactions(user.id);
   return NextResponse.json(transactions);
 }
 
@@ -39,7 +39,7 @@ export async function POST(request) {
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const transaction = createTransaction({
+  const transaction = await createTransaction({
     name,
     amount,
     categoryId: Number(categoryId),
@@ -56,6 +56,6 @@ export async function DELETE() {
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  clearTransactions(user.id);
+  await clearTransactions(user.id);
   return NextResponse.json({ success: true });
 }

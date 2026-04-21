@@ -32,6 +32,14 @@ export default function Home() {
         fetch("/api/categories"),
         fetch("/api/users/me"),
       ]);
+      if (
+        txRes.status === 401 ||
+        catRes.status === 401 ||
+        userRes.status === 401
+      ) {
+        router.push("/login");
+        return;
+      }
       const [txData, catData, userData] = await Promise.all([
         txRes.json(),
         catRes.json(),

@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import styles from "./page.module.css";
 
-export default function LoginPage() {
+export default function SignupPage() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -16,15 +17,15 @@ export default function LoginPage() {
     setError("");
     setSubmitting(true);
 
-    const res = await fetch("/api/auth/login", {
+    const res = await fetch("/api/auth/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
+      body: JSON.stringify({ name, email }),
     });
 
     if (!res.ok) {
       const data = await res.json();
-      setError(data.error || "Login failed");
+      setError(data.error || "Sign up failed");
       setSubmitting(false);
       return;
     }
@@ -36,9 +37,23 @@ export default function LoginPage() {
     <div className={styles.page}>
       <div className={styles.card}>
         <h1 className={styles.title}>Budget Tracker</h1>
-        <p className={styles.subtitle}>Sign in to continue</p>
+        <p className={styles.subtitle}>Create an account</p>
 
         <form className={styles.form} onSubmit={handleSubmit}>
+          <label className={styles.label} htmlFor="name">
+            Name
+          </label>
+          <input
+            id="name"
+            className={styles.input}
+            type="text"
+            placeholder="Your name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+            autoFocus
+          />
+
           <label className={styles.label} htmlFor="email">
             Email
           </label>
@@ -50,20 +65,19 @@ export default function LoginPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            autoFocus
           />
 
           {error && <p className={styles.error}>{error}</p>}
 
           <button className={styles.button} type="submit" disabled={submitting}>
-            {submitting ? "Signing in..." : "Sign in"}
+            {submitting ? "Creating account..." : "Create account"}
           </button>
         </form>
 
         <p className={styles.footer}>
-          Don&apos;t have an account?{" "}
-          <Link href="/signup" className={styles.link}>
-            Sign up
+          Already have an account?{" "}
+          <Link href="/login" className={styles.link}>
+            Sign in
           </Link>
         </p>
       </div>

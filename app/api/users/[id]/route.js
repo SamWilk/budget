@@ -4,12 +4,12 @@ import {
   updateUser,
   deleteUser,
   getUserByEmail,
-} from "@/app/lib/mock-data";
+} from "@/app/lib/db";
 
 export async function GET(request, { params }) {
   const { id } = await params;
   console.log(`[GET] /api/users/${id}`);
-  const user = getUserById(Number(id));
+  const user = await getUserById(Number(id));
 
   if (!user) {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
@@ -24,7 +24,7 @@ export async function PUT(request, { params }) {
   console.log(`[PUT] /api/users/${id}`, body);
 
   if (body.email) {
-    const existing = getUserByEmail(body.email);
+    const existing = await getUserByEmail(body.email);
     if (existing && existing.id !== Number(id)) {
       return NextResponse.json(
         { error: "A user with that email already exists" },
@@ -33,7 +33,7 @@ export async function PUT(request, { params }) {
     }
   }
 
-  const user = updateUser(Number(id), body);
+  const user = await updateUser(Number(id), body);
 
   if (!user) {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
@@ -45,7 +45,7 @@ export async function PUT(request, { params }) {
 export async function DELETE(request, { params }) {
   const { id } = await params;
   console.log(`[DELETE] /api/users/${id}`);
-  const deleted = deleteUser(Number(id));
+  const deleted = await deleteUser(Number(id));
 
   if (!deleted) {
     return NextResponse.json({ error: "User not found" }, { status: 404 });

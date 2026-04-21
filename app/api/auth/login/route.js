@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getUserByEmail } from "@/app/lib/mock-data";
+import { getUserByEmail } from "@/app/lib/db";
 import { signToken, authCookieOptions } from "@/app/lib/auth";
 
 export async function POST(request) {
@@ -11,7 +11,7 @@ export async function POST(request) {
     return NextResponse.json({ error: "email is required" }, { status: 400 });
   }
 
-  const user = getUserByEmail(email);
+  const user = await getUserByEmail(email);
   if (!user) {
     return NextResponse.json(
       { error: "No account found with that email" },

@@ -1,6 +1,6 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
-import { getUserById } from "./mock-data";
+import { getUserById } from "./db";
 
 const SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET || "budget-tracker-dev-secret-change-in-prod",
@@ -33,7 +33,7 @@ export async function getAuthUser() {
   const payload = await verifyToken(token);
   if (!payload) return null;
 
-  return getUserById(payload.userId);
+  return await getUserById(payload.userId);
 }
 
 export function authCookieOptions(token) {

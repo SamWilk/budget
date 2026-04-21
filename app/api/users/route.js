@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { getUsers, createUser, getUserByEmail } from "@/app/lib/mock-data";
+import { getUsers, createUser, getUserByEmail } from "@/app/lib/db";
 
 export async function GET() {
   console.log("[GET] /api/users");
-  const users = getUsers();
+  const users = await getUsers();
   return NextResponse.json(users);
 }
 
@@ -19,13 +19,13 @@ export async function POST(request) {
     );
   }
 
-  if (getUserByEmail(email)) {
+  if (await getUserByEmail(email)) {
     return NextResponse.json(
       { error: "A user with that email already exists" },
       { status: 409 },
     );
   }
 
-  const user = createUser({ name, email });
+  const user = await createUser({ name, email });
   return NextResponse.json(user, { status: 201 });
 }

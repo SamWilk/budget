@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { getCategories, createCategory } from "@/app/lib/mock-data";
+import { getCategories, createCategory } from "@/app/lib/db";
 
 export async function GET() {
   console.log("[GET] /api/categories");
-  const categories = getCategories();
+  const categories = await getCategories();
   return NextResponse.json(categories);
 }
 
@@ -26,6 +26,6 @@ export async function POST(request) {
     );
   }
 
-  const category = createCategory({ name, type });
+  const category = await createCategory({ name, type });
   return NextResponse.json(category, { status: 201 });
 }
